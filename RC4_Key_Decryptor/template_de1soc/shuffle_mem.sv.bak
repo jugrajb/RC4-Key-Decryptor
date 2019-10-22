@@ -1,0 +1,69 @@
+module shuffle_mem(clk, secret_key, start_shuffle, shuffle_done);
+    input logic start_shuffle, clk;
+    input logic [23:0] secret_key;
+
+    output logic shuffle_done;
+
+    logic [7:0] i = 8'b0;
+    logic [7:0] j = 8'b0;
+
+    logic [1:0] i_mod_key_len;
+    logic [7:0] mem_data_j, mem_data_i, sec_data, in_data;
+
+    logic shuffle_en = 1'b1;
+
+    always_ff @(posedge clk) begin
+        if(shuffle_en) begin
+            case(i_mod_key_len)
+                2'b00: sec_data <= secret_key[23:16];
+                2'b01: sec_data <= secret_key[15:8];
+                2'b10: sec_data <= secret_key[7:0];
+                default: 8'h0;
+            endcase
+        end
+    end
+
+    always_ff @(posedge clk) begin
+        if(start_shuffle & shuffle_en) begin
+
+            j <= j + mem_data + sec_data;
+            i <= i + 1'b1;
+
+            case(i_mod_key_len)
+                2'b00: i_mod_key_len <= 2'b01;
+                2'b01: i_mod_key_len <= 2'b10;
+                2'b10: i_mod_key_len <= 2'b00;
+                default: i_mod_key_len <= 2'b00;
+            endcase
+        end
+    end
+
+    always_ff @(posedge clk) shuffle_en <= (i != 8'hFF);
+
+    s_memory mem_r_i(
+        .address(i),
+        .clock(clk),
+        .data(),
+        .wren(1'b0),
+        .q(mem_data_i)
+    );
+
+    s_memory mem_r_j(
+        .address(j),
+        .clock(clk),
+        .data(),
+        .wren(1'b0),
+        .q(mem_data_j)
+    );
+
+    s_memory mem_w(
+        .address(i),
+        .clock(~clk),
+        .data(mem_data_j),
+        .wren(1'b1),
+        .q()
+    );
+
+    assign shuffle_done = ~shuffle_en;
+
+endmodule

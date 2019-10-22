@@ -1,0 +1,2 @@
+Info (10281): Verilog HDL Declaration information at shuffle_mem.sv(3): object "start" differs only in case from object "START" in the same scope
+Info (10281): Verilog HDL Declaration information at rc4_key_cycle.sv(13): object "no_sol" differs only in case from object "NO_SOL" in the same scope

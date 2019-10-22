@@ -1,0 +1,25 @@
+module load_mem(clk, load_done);
+    input logic clk;
+    
+    logic [7:0] counter = 8'b0;
+    logic load_en = 1'b1;
+
+    always_ff @(posedge clk) begin
+        if(load_en) begin
+            counter <= counter + 1'b1;
+        end
+    end
+
+    always_ff @(posedge clk) load_en <= (counter != 8'hFF);
+
+    s_memory mem(
+        .address(counter), 
+        .clock(clk),
+        .data(counter),
+        .wren(load_en),
+        .q()
+    );
+
+    assign load_done = ~load_en;
+
+endmodule

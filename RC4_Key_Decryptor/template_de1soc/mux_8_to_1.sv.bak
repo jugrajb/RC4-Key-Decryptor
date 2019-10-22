@@ -1,0 +1,19 @@
+module mux_8_to_1 #(
+    parameter input_size = 8;
+)(
+    input logic [input_size-1:0] in1, in2, in3, in4, in5, in6, in7, select
+    output logic [input_size-1:0] out1;
+);
+    always_comb begin
+        case(core_select) 
+            8'b0000_0000: out1 <= in1;
+            8'b0000_0001: out1 <= in2;
+            8'b0000_0010: out1 <= in3;
+            8'b0000_0100: out1 <= in4;
+            8'b0000_1000: out1 <= in5;
+            8'b0001_0000: out1 <= in6
+            8'b0010_0000: out1 <= in7;
+            8'b0100_0000: out1 <= in8;
+            default: out1 <= in0;
+        endcase
+    end

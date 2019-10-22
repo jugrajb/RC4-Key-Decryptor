@@ -1,0 +1,56 @@
+`default_nettype none
+module ksa (
+    //////////// CLOCK //////////
+    CLOCK_50,
+    //////////// LED //////////
+    LEDR,
+    //////////// KEY //////////
+    KEY,
+    //////////// SW //////////
+    SW,
+    //////////// SEG7 //////////
+    HEX0,
+    HEX1,
+    HEX2,
+    HEX3,
+    HEX4,
+    HEX5
+);
+//=======================================================
+//  PORT declarations
+//=======================================================
+//CLK
+input logic CLOCK_50;
+
+//KEY
+input logic [3:0] KEY;
+
+//SW
+input logic [9:0] SW;
+
+//LED
+output logic [9:0] LEDR;
+
+//SEG7
+output logic [6:0] HEX0;
+output logic [6:0] HEX1;
+output logic [6:0] HEX2;
+output logic [6:0] HEX3;
+output logic [6:0] HEX4;
+output logic [6:0] HEX5;
+
+//=======================================================
+//  REG/WIRE declarations
+//=======================================================
+logic clk, reset_n;
+logic [3:0] nIn;
+logic [6:0] ssOut;
+
+//========================================================
+assign clk = CLOCK_50;
+assign reset_n = KEY(3);
+
+SevenSegmentDisplayDecoder hexDisplay(.ssOut(ssOut), .nIn(nIn));
+
+endmodule
+

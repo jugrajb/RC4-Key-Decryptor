@@ -1,0 +1,117 @@
+module decrypt_msg (
+    clk, reset, start, 
+    dm_done,
+    dm_w_address, dm_w_data, dm_w_wren, dm_w_q,
+    dm_en_r_address, dm_en_r_q,
+    dm_dc_address, dm_dc_data, dm_dc_wren
+);
+    input logic clk, reset, start;
+    input logic [7:0] dm_w_q, dm_en_r_q;
+
+    output logic dm_done, dm_w_wren, dm_dc_wren;
+    output logic [7:0] dm_w_address, dm_w_data, dm_en_r_address, dm_dc_address, dm_dc_data;
+
+    logic [4:0] k = 5'b0;
+    logic [7:0] i, j = 8'b0;
+
+    //States
+    parameter [7:0] IDLE        = 8'b000_00001;
+    parameter [7:0] INC_I       = 8'b000_00010;
+    parameter [7:0] LOAD_I      = 8'b000_00011;
+    parameter [7:0] READ_I      = 8'b000_00100;
+    parameter [7:0] SAVE_I      = 8'b000_00101;
+    parameter [7:0] CALC_J      = 8'b000_00110;
+    parameter [7:0] LOAD_J      = 8'b000_00111;
+    parameter [7:0] READ_J      = 8'b000_01000;
+    parameter [7:0] SAVE_J      = 8'b000_01001;
+    parameter [7:0] WRITE_I     = 8'b010_01010;
+    parameter [7:0] WRITE_J     = 8'b010_01011;
+    parameter [7:0] CALC_F_IND  = 8'b000_01110;
+    parameter [7:0] LOAD_F_IND  = 8'b000_01111;
+    parameter [7:0] READ_F_IND  = 8'b000_10000;
+    parameter [7:0] LOAD_ENC    = 8'b000_10001
+    parameter [7:0] READ_ENC    = 8'b000_10010
+    parameter [7:0] XOR_F_ENI   = 8'b000_10011;
+    parameter [7:0] WRITE_DC    = 8'b001_10100;
+    parameter [7:0] CHK_DONE    = 8'b000_10101;
+    parameter [7:0] INC_K       = 8'b000_10110;
+    parameter [7:0] DONE        = 8'b100_10111;
+
+    logic [7:0] state = IDLE;
+
+    logic [7:0] mem_data_i;
+    logic [7:0] mem_data_j;
+    
+
+    always_ff @(posedge clk, posedge reset) begin
+        if(reset) state <= IDLE;
+        else begin
+            case(state)
+                IDLE:       begin
+                                if(start) state <= INC;
+                                else state <= IDLE;
+                            end
+                INC_I:        state <= LOAD_I;
+                LOAD_I:     state <= READ_I;
+                READ_I:     state <= SAVE_I;
+                SAVE_I:     state <= CALC_J;
+                CALC_J:     state <= LOAD_J;
+                LOAD_J:     state <= READ_J;
+                READ_J:     state <= SAVE_J;
+                SAVE_J:     state <= WRITE_I;
+                WRITE_I:    state <= WRITE_J;
+                WRITE_J:    state <= LOAD_F_IND;
+                //CALC_F_IND: state <= LOAD_F_IND;
+                LOAD_F_IND: state <= READ_F_IND;
+                READ_F_IND: state <= LOAD_ENC;
+                LOAD_ENC:   state <= READ_ENC;
+                READ_ENC:   state <= WRITE_DC:
+                //XOR_F_ENI:  state <= WRITE_DC;
+                WRITE_DC:   state <= CHK_DONE;
+                CHK_DONE:   begin
+                                if(k == 5'd31) state <= DONE;
+                                else state <= INC_K;
+                            end
+                INC_K:      state <= INC_I;
+                DONE:       state <= DONE;
+                default:    state <= IDLE;
+            endcase
+        end
+    end
+
+    assign dm_done = state[7];
+
+    always_ff @(posedge clk) begin
+        dm_w_wren <= state[6];
+        dm_dc_wren <= state[5];
+
+        case(state)
+            INC:        i <= i + 1'b1;
+            LOAD_I:     dm_w_address <= i;
+            SAVE_I:     mem_data_i <= dm_w_q;
+            CALC_J:     j <= j + mem_data_i;
+            LOAD_J:     dm_w_address <= j;
+            SAVE_J:     mem_data_j <= dm_w_q;
+            WRITE_I:    begin
+                            dm_w_address <= j;
+                            dm_w_data <= mem_data_i;
+                        end
+            WRITE_J:    begin
+                            dm_w_address <= i;
+                            dm_w_data <= mem_data_j;
+                        end
+            LOAD_F_IND: dm_w_address <= (mem_data_i + mem_data_j);
+            LOAD_ENC:   dm_en_r_address <= k;
+            WRITE_DC:   begin
+                            dm_dc_address <= k;
+                            dm_dc_r_data <= (dm_w_q ^ dm_en_r_q);
+                        end
+            default:    begin
+                            dm_w_address <= dm_w_address;
+                            dm_dc_address <= dm_dc_address;
+                            dm_en_r_address <= dm_en_r_address;
+                        end
+        endcase
+    end
+
+endmodule

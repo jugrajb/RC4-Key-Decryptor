@@ -1,0 +1,55 @@
+module rc4_key_cycle (clk, reset, start, dc_done, dc_invalid, sc_key, start_decrypt);
+    input logic clk, reset, start, dc_done, dc_invalid;
+ 
+    output logic [23:0] sc_key;
+    output logic reset_decrypt;
+
+    logic [23:0] key_count = 23'b0;
+
+    //States
+    parameter [4:0] IDLE            = 5'b00_000;
+    parameter [4:0] KEY_SET         = 5'b10_001;
+    parameter [4:0] WAIT_DECRYPT    = 5'b00_010;
+    parameter [4:0] KEY_INC         = 5'b00_011;
+    parameter [4:0] RESET_DECRPYT   = 5'b01_100;
+    parameter [4:0] DONE            = 5'b00_101;
+
+    logic [3:0] state;
+
+    always_ff @(posedge clk, posedge reset) begin
+        if(reset) state <= IDLE;
+        else begin
+            case(state)
+                IDLE:           begin
+                                    if(start) state <= KEY_SET;
+                                    else state <= IDLE;
+                                end
+                KEY_SET:        state <= WAIT_DECRYPT;
+                WAIT_DECRYPT:   begin
+                                    if(dc_done) state <= DONE;
+                                    else if(dc_invalid) state <= KEY_INC;
+                                    else state <= WAIT_DECRYPT;
+                                end
+                KEY_INC:        state <= RESET_DECRPYT;
+                RESET_DECRPYT:  state <= KEY_SET;
+                DONE:           state <= DONE;
+                default:        state <= IDLE;
+            endcase
+        end
+    end
+
+    always_ff @(posedge clk, posedge reset) begin
+        if(reset) key_count <= 23'b0;
+        else begin
+            case(state)
+                KEY_SET: sc_key <= key_count;
+                KEY_INC: key_count <= key_count + 1'b1;
+                default: key_count <= key_count;
+            endcase
+        end
+
+        reset_decrypt <= state[3];
+        start_decrypt <= state[4];
+    end
+
+endmodule

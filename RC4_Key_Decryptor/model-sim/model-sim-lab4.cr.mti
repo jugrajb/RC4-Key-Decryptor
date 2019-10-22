@@ -1,0 +1,57 @@
+D:/cpen_311/Lab4_template_de1soc/model-sim/rc4_tb.sv {1 {vlog -work work -sv -stats=none D:/cpen_311/Lab4_template_de1soc/model-sim/rc4_tb.sv
+Model Technology ModelSim ALTERA vlog 10.3c Compiler 2014.09 Sep 20 2014
+-- Compiling module rc4_tb
+
+Top level modules:
+	rc4_tb
+
+} {} {}} D:/cpen_311/Lab4_template_de1soc/model-sim/load_mem.sv {1 {vlog -work work -sv -stats=none D:/cpen_311/Lab4_template_de1soc/model-sim/load_mem.sv
+Model Technology ModelSim ALTERA vlog 10.3c Compiler 2014.09 Sep 20 2014
+-- Compiling module load_mem
+
+Top level modules:
+	load_mem
+
+} {} {}} D:/cpen_311/Lab4_template_de1soc/model-sim/load_mem_tb.sv {1 {vlog -work work -sv -stats=none D:/cpen_311/Lab4_template_de1soc/model-sim/load_mem_tb.sv
+Model Technology ModelSim ALTERA vlog 10.3c Compiler 2014.09 Sep 20 2014
+-- Compiling module load_mem_tb
+
+Top level modules:
+	load_mem_tb
+
+} {} {}} D:/cpen_311/Lab4_template_de1soc/model-sim/shuffle_mem.sv {1 {vlog -work work -sv -stats=none D:/cpen_311/Lab4_template_de1soc/model-sim/shuffle_mem.sv
+Model Technology ModelSim ALTERA vlog 10.3c Compiler 2014.09 Sep 20 2014
+-- Compiling module shuffle_mem
+
+Top level modules:
+	shuffle_mem
+
+} {} {}} D:/cpen_311/Lab4_template_de1soc/model-sim/decrypt_tb.sv {1 {vlog -work work -sv -stats=none D:/cpen_311/Lab4_template_de1soc/model-sim/decrypt_tb.sv
+Model Technology ModelSim ALTERA vlog 10.3c Compiler 2014.09 Sep 20 2014
+-- Compiling module decrypt_tb
+
+Top level modules:
+	decrypt_tb
+
+} {} {}} D:/cpen_311/Lab4_template_de1soc/model-sim/shuffle_mem_tb.sv {1 {vlog -work work -sv -stats=none D:/cpen_311/Lab4_template_de1soc/model-sim/shuffle_mem_tb.sv
+Model Technology ModelSim ALTERA vlog 10.3c Compiler 2014.09 Sep 20 2014
+-- Compiling module shuffle_mem_tb
+
+Top level modules:
+	shuffle_mem_tb
+
+} {} {}} D:/cpen_311/Lab4_template_de1soc/model-sim/rc4_key_cycle.sv {1 {vlog -work work -sv -stats=none D:/cpen_311/Lab4_template_de1soc/model-sim/rc4_key_cycle.sv
+Model Technology ModelSim ALTERA vlog 10.3c Compiler 2014.09 Sep 20 2014
+-- Compiling module rc4_key_cycle
+
+Top level modules:
+	rc4_key_cycle
+
+} {} {}} D:/cpen_311/Lab4_template_de1soc/model-sim/decrypt_msg.sv {1 {vlog -work work -sv -stats=none D:/cpen_311/Lab4_template_de1soc/model-sim/decrypt_msg.sv
+Model Technology ModelSim ALTERA vlog 10.3c Compiler 2014.09 Sep 20 2014
+-- Compiling module decrypt_msg
+
+Top level modules:
+	decrypt_msg
+
+} {} {}}
